@@ -1,0 +1,13 @@
+# roslibjs repository guide
+
+This npm workspace contains `packages/roslib` (the library) and `packages/roslib-examples` (browser examples). Use Node 20+; CI tests 20, 22, and 24. From the root, `npm ci`, `npm run build --workspaces --if-present`, and `npm test --workspaces --if-present` match CI. There are no root scripts to substitute for these workspace commands.
+
+The library provides Vite build, Vitest tests, ESLint, and Typedoc commands in its own package. Run `npm run lint --workspace=packages/roslib` for relevant source changes. Preparation builds and generates an import map using JSPM, which can need network access. Documentation warnings and any skipped workspace script should be reported, not silently treated as a pass. No standalone root typecheck script is declared.
+
+Examples use an HTTP server and ROS/rosbridge connectivity, conventionally WebSocket port 9090. The test backend in `packages/roslib/test/setup/ros-backend.ts` builds a Docker image and stops/removes any existing `roslibjs-test-backend` container before creating its replacement on port 9090. It requires Docker, image-build network access, and that disposable container name/port to be available; inspect the selected Vitest setup before execution. For a bounded local run, use `npm test --workspace=packages/roslib -- --run` to avoid watch mode. Keep simulated/local ROS evidence separate from a real robot. Publishing topics, actions, or service calls can operate hardware, so ordinary tests must use an isolated ROS graph rather than a user's live robot.
+
+## Completing work
+
+Carry the authorized change through the relevant checks and repair failures it causes. Make routine, reversible implementation choices using existing patterns; ask only when missing information, a material product decision, or an authorization boundary prevents the next step. Existing authorization remains valid within its scope. If blocked, name the exact action and missing prerequisite, retain concise evidence, and continue independent work.
+
+Choose verification proportional to the change. For instructions or prose, inspect changed paths, links, and local instruction precedence and run `git diff --check -- <changed-paths>`; don't install dependencies or run the application solely for a prose edit. For behavior changes, exercise the affected behavior and applicable checks below, then broaden only for failures or unresolved risk. Report files changed, checks actually run and their results, commands only inspected, and remaining limitations. A build or source inspection alone does not prove runtime behavior. Continue through already-authorized follow-through; stop at explicit review checkpoints or boundaries requiring new authorization.
